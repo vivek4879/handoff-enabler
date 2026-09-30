@@ -1,6 +1,6 @@
-# PRD — Reel: Video Commission Marketplace (v1)
+# PRD — Handoff: Video Commission Marketplace (v1)
 
-**Status:** Draft · **Owner:** Vivek · **Last updated:** 2026-09-26
+**Status:** Draft · **Owner:** Vivek · **Last updated:** 2026-09-30
 
 ## 1. Problem
 Independent video creators (choreographers, dance instructors, video editors) take custom work through DMs and informal payment apps. Clients risk paying for work that never arrives. Creators risk delivering work that never gets paid. Neither side has a trusted place to agree on the work, hold payment, and hand over large video files.
@@ -46,6 +46,12 @@ accepted → overdue (past due date) → client may cancel → refunded
 > Note: an order can realistically span **~3 weeks** from payment to approval. The payment design must hold funds that long (see ADR-001).
 
 ## 6. User stories & acceptance criteria
+
+### Accounts
+**US-0: As a user, I can sign up and log in as a client or a creator.**
+- Email + password sign-up and login; passwords are hashed, never stored in plain text.
+- Sessions survive a page refresh and can be logged out; protected pages and API routes reject unauthenticated requests.
+- A user's role (client or creator) controls which pages and actions they can access.
 
 ### Creator onboarding
 **US-1: As a creator, I can connect a payout account so I can get paid.**
@@ -111,4 +117,5 @@ accepted → overdue (past due date) → client may cancel → refunded
 1. **ADR-001:** How do we hold funds for up to ~3 weeks? (Card authorizations expire long before that.)
 2. **ADR-002:** Chunked upload approach — S3 multipart with presigned URLs vs. TUS.
 3. **ADR-003:** How are timed rules (48h accept, 5-day auto-approve, upload cleanup) executed reliably?
-4. Should the platform fee be refunded on cancellation? (Proposed: yes, full refund in v1.)
+4. **ADR-004:** Authentication approach — own session auth vs. Auth.js vs. hosted provider.
+5. Should the platform fee be refunded on cancellation? (Proposed: yes, full refund in v1.)
