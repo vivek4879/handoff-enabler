@@ -45,12 +45,15 @@ Do not write the implementation for these. Explain concepts, ask guiding questio
 - Structured logs (JSON) including `requestId` and `orderId` where available.
 
 ## Commands
-_To be filled in once the repo is scaffolded (S0)._
-- Install: `…`
-- Dev: `…`
-- Test: `…`
-- Lint / typecheck: `…`
-- DB migrate: `…`
+Run these from the repo root unless noted. Requires Node 22 (`.nvmrc`) and Docker (for Postgres).
+- Install: `pnpm install`
+- Start Postgres (dev): `docker compose up -d` — Postgres 16, exposed on `localhost:5432` (`handoff`/`handoff`/`handoff_dev`). Check with `docker compose ps` (look for `(healthy)`).
+- Dev (both apps): `pnpm dev` — web on `:3000`, API on `:4000`. Requires `apps/api/.env` to exist (copy from `apps/api/.env.example`).
+- Build: `pnpm build`
+- Lint: `pnpm lint`
+- Typecheck: `pnpm typecheck`
+- Test: `pnpm test` — no test runner wired up yet (S0 scaffolding only).
+- DB migrate: `…` — no migration tool chosen yet.
 
 ## Commits
 Conventional commits: `feat:`, `fix:`, `test:`, `docs:`, `chore:`, `refactor:`.
