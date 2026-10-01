@@ -3,10 +3,10 @@
 One sprint ≈ 1 week, ending with something deployed. Each line is a GitHub issue; the milestone is the sprint.
 Labels: area (`payments`, `uploads`, `infra`, `docs`, `core`) + type (`feature`, `bug`, `chore`).
 
-**Current sprint:** S0 · **Current issue:** [#1 Scaffold monorepo: Next.js web + Node/TS API + Postgres](https://github.com/vivek4879/handoff-enabler/issues/1)
+**Current sprint:** S0 · **Current issue:** [#2 Set up CI: lint, typecheck, test on PRs](https://github.com/vivek4879/handoff-enabler/issues/2)
 
 ## S0 · Setup
-- [ ] Scaffold monorepo: Next.js web + Node/TS API + Postgres — `infra`
+- [x] Scaffold monorepo: Next.js web + Node/TS API + Postgres — `infra`
 - [ ] Set up CI: lint, typecheck, test on PRs — `infra`
 - [ ] Add CLAUDE.md learning-project rules — `docs`
 - [ ] ADR-001: Fund holding strategy — `docs`
