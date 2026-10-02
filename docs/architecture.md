@@ -25,11 +25,11 @@ Status: draft. Anything marked **(ADR pending)** is not decided yet — do not i
 | Postgres | Source of truth for users, services, orders, order history, uploads, processed Stripe events |
 | R2 | Stores delivery videos; private bucket, access only via signed URLs |
 | Stripe | Card payments, creator payout accounts, transfers, refunds |
-| Scheduler | 48h accept timeout, 5-day auto-approve **(ADR-003 pending)** |
+| Scheduler | 48h accept timeout, delivery deadline, card hold expiry, 5-day auto-approve **(ADR-003 pending)** |
 
 ## Key flows (high level)
 
-**Pay for an order (US-3)**
+**Pay for an order (US-3)** — flow below assumes immediate capture **(ADR-001 pending: with authorize-then-capture, a different event confirms the hold, so "paid" may split into authorized and captured)**
 1. Client submits brief → API creates order (`pending_payment`) and a PaymentIntent (with idempotency key).
 2. Browser confirms payment with Stripe Elements.
 3. Stripe sends `payment_intent.succeeded` → API verifies signature, dedupes by event ID, marks order paid in a transaction.

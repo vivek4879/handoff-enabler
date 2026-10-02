@@ -1,6 +1,6 @@
 # PRD — Handoff: Video Commission Marketplace (v1)
 
-**Status:** Draft · **Owner:** Vivek · **Last updated:** 2026-09-30
+**Status:** Draft · **Owner:** Vivek · **Last updated:** 2026-10-02
 
 ## 1. Problem
 Independent video creators (choreographers, dance instructors, video editors) take custom work through DMs and informal payment apps. Clients risk paying for work that never arrives. Creators risk delivering work that never gets paid. Neither side has a trusted place to agree on the work, hold payment, and hand over large video files.
@@ -12,7 +12,7 @@ Independent video creators (choreographers, dance instructors, video editors) ta
 
 ## 3. Goals
 1. A client can commission, pay, receive, and approve a custom video end to end.
-2. Payment is collected up front and **held by the platform until the client approves** (or auto-approval kicks in).
+2. Payment is secured before work starts and **released to the creator only after the client approves** (or auto-approval kicks in). How it is secured (card hold, when to authorize and capture) is decided in ADR-001.
 3. Creators can reliably upload large video files (up to 5 GB) that survive network interruptions.
 4. Every money movement is traceable, idempotent, and driven by confirmed Stripe events, not client redirects.
 
@@ -23,6 +23,7 @@ Independent video creators (choreographers, dance instructors, video editors) ta
 - Watermarking, transcoding, or adaptive streaming
 - Mobile apps, multi-currency (USD only), non-US creators
 - Custom quotes (fixed-price services only)
+- Orders that cannot go from request to delivery within ~6 days (long-lead bookings would need deferred or rolling authorization; ADR-001 records the options)
 
 ## 5. Order lifecycle
 ```
@@ -38,12 +39,13 @@ accepted → overdue (past due date) → client may cancel → refunded
 | Rule | Value |
 |---|---|
 | Creator must accept within | 48 hours, else auto-decline + full refund |
-| Delivery window | Set per service, 1–14 days |
+| Delivery window | Set per service, 1–4 days |
+| Card hold budget | Accept (48h) + delivery (≤ 4 days) = 6 days, inside the ~7-day card hold, leaving 1 day of margin |
 | Revisions | Up to 2; each resets due date by 3 days |
 | Auto-approve | 5 days after latest delivery with no client action |
 | Platform fee | 10% of order total, deducted from creator payout |
 
-> Note: an order can realistically span **~3 weeks** from payment to approval. The payment design must hold funds that long (see ADR-001).
+> Note: card authorization holds last about **7 days**, so v1 keeps the span from authorization to capture inside ~6 days (see the hold budget above). Review, revisions, and auto-approve come after delivery. Whether capture happens at delivery or at approval is decided in ADR-001; if it is approval, the delivery window must shrink further.
 
 ## 6. User stories & acceptance criteria
 
@@ -70,7 +72,7 @@ accepted → overdue (past due date) → client may cancel → refunded
 - Failed or 3-D Secure-declined payments show a clear error and leave no paid order.
 
 **US-4: As a creator, I can accept or decline a paid order.**
-- Decline or 48h timeout triggers a full refund automatically; the client is notified.
+- Decline or 48h timeout automatically refunds in full (or releases the card hold, depending on ADR-001); the client is notified.
 
 ### Delivery
 **US-5: As a creator, I can upload a delivery video (MP4/MOV, up to 5 GB).**
@@ -114,8 +116,8 @@ accepted → overdue (past due date) → client may cancel → refunded
 - **Testing:** payment and upload flows covered by automated end-to-end tests in Stripe test mode.
 
 ## 9. Open questions (to be resolved in ADRs)
-1. **ADR-001:** How do we hold funds for up to ~3 weeks? (Card authorizations expire long before that.)
+1. **ADR-001:** How do we secure payment given the ~7-day card hold limit? When do we authorize and capture, and how do we handle orders that cannot fit in the window?
 2. **ADR-002:** Chunked upload approach — S3 multipart with presigned URLs vs. TUS.
-3. **ADR-003:** How are timed rules (48h accept, 5-day auto-approve, upload cleanup) executed reliably?
+3. **ADR-003:** How are timed rules (48h accept, delivery deadline, card hold expiry, 5-day auto-approve, upload cleanup) executed reliably?
 4. **ADR-004:** Authentication approach — own session auth vs. Auth.js vs. hosted provider.
 5. Should the platform fee be refunded on cancellation? (Proposed: yes, full refund in v1.)
