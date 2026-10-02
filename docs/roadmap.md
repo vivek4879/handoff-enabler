@@ -3,18 +3,20 @@
 One sprint ≈ 1 week, ending with something deployed. Each line is a GitHub issue; the milestone is the sprint.
 Labels: area (`payments`, `uploads`, `infra`, `docs`, `core`) + type (`feature`, `bug`, `chore`).
 
-**Current sprint:** S0 · **Current issue:** [#3 Add CLAUDE.md learning-project rules](https://github.com/vivek4879/handoff-enabler/issues/3)
+**Current sprint:** S0 · **Current issue:** [#4 ADR-001: Fund holding strategy](https://github.com/vivek4879/handoff-enabler/issues/4)
 
 ## S0 · Setup
 - [x] Scaffold monorepo: Next.js web + Node/TS API + Postgres — `infra`
 - [x] Set up CI: lint, typecheck, test on PRs — `infra`
 - [ ] Add `pnpm build` to CI (#25) — `infra`
 - [ ] Set up Vitest and first tests (#26) — `infra`
-- [ ] Add CLAUDE.md learning-project rules — `docs`
+- [x] Add CLAUDE.md learning-project rules — `docs`
 - [ ] ADR-001: Fund holding strategy — `docs`
 - [ ] ADR-002: Resumable upload approach — `docs`
 - [ ] ADR-003: Scheduling timed order rules — `docs`
 - [ ] ADR-004: Authentication approach — `docs`
+- [ ] ADR-006: Database migration tool (#28) — `docs`
+- [ ] Choose and wire up a DB migration tool (#29) — `infra`
 
 ## S1 · Accounts & onboarding
 - [ ] US-0: Users sign up and log in as client or creator — `core`
