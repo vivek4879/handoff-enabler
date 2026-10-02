@@ -7,45 +7,46 @@ Independent video creators (choreographers, dance instructors, video editors) ta
 
 ## 2. Users
 - **Creator:** offers fixed-price video services (e.g. "Custom 60s choreography video", "Edit up to 10 min of footage"), receives payouts.
-- **Client:** individual or small business that commissions a video, pays up front, reviews the delivery.
+- **Client:** individual or small business that commissions a video, saves a card, and receives the delivery.
 - **Admin (you):** monitors orders, payments, and failures. Can issue refunds manually.
 
 ## 3. Goals
-1. A client can commission, pay, receive, and approve a custom video end to end.
-2. Payment is secured before work starts and **released to the creator only after the client approves** (or auto-approval kicks in). How it is secured (card hold, when to authorize and capture) is decided in ADR-001.
+1. A client can commission, pay, and receive a custom video end to end.
+2. The client's card is **authorized when the creator accepts and charged only when the video is delivered**, which also pays the creator. Details in ADR-001.
 3. Creators can reliably upload large video files (up to 5 GB) that survive network interruptions.
 4. Every money movement is traceable, idempotent, and driven by confirmed Stripe events, not client redirects.
 
 ## 4. Non-goals (v1)
-- In-app chat (a single brief field plus revision notes only)
+- In-app chat (a single brief field only)
 - Reviews and ratings, search/recommendations (a simple creator list is enough)
 - Dispute/chargeback handling beyond logging the event and alerting admin
 - Watermarking, transcoding, or adaptive streaming
 - Mobile apps, multi-currency (USD only), non-US creators
 - Custom quotes (fixed-price services only)
-- Orders that cannot go from request to delivery within ~6 days (long-lead bookings would need deferred or rolling authorization; ADR-001 records the options)
+- Orders that need more than ~5 days from acceptance to delivery (they would need re-authorization or charging at acceptance; ADR-001 records the options)
+- Client review, approval, and revision requests (payment is captured on delivery; admin can refund manually)
 
 ## 5. Order lifecycle
+The client's card is **saved at request, authorized (held) when the creator accepts, and captured when the delivery is verified**. There is no client review or approval step: capture pays the creator.
 ```
-requested+paid → accepted → delivered → approved → paid_out
-      │              │          │ ↑
-      │              │          └─ revision_requested (max 2)
-      ├─ declined / accept timeout (48h) → refunded
-      └─ cancelled by client before acceptance → refunded
-accepted → overdue (past due date) → client may cancel → refunded
+requested (card saved) → accepted (card authorized) → delivered (captured, creator paid)
+      │                        │
+      │                        ├─ authorization fails → client has a fixed window to fix it → else cancelled
+      │                        └─ overdue (past due date) → client may cancel → hold released
+      ├─ declined / accept timeout (48h) → closed, nothing charged
+      └─ cancelled by client before acceptance → closed, nothing charged
 ```
 
 ### Timing rules
 | Rule | Value |
 |---|---|
-| Creator must accept within | 48 hours, else auto-decline + full refund |
-| Delivery window | Set per service, 1–4 days |
-| Card hold budget | Accept (48h) + delivery (≤ 4 days) = 6 days, inside the ~7-day card hold, leaving 1 day of margin |
-| Revisions | Up to 2; each resets due date by 3 days |
-| Auto-approve | 5 days after latest delivery with no client action |
-| Platform fee | 10% of order total, deducted from creator payout |
+| Creator must accept within | 48 hours, else auto-decline (nothing was charged) |
+| Delivery window | Set per service, 1–5 days, counted from acceptance |
+| Card hold budget | The hold starts at acceptance and lasts about 7 days. Delivery (≤ 5 days) leaves 2 days of margin for upload time, retries, and scheduler lag |
+| Authorization retry window | Fixed window to fix a failed authorization (value set in ADR-003) |
+| Platform fee | 10% of order total, taken when the payment is captured |
 
-> Note: card authorization holds last about **7 days**, so v1 keeps the span from authorization to capture inside ~6 days (see the hold budget above). Review, revisions, and auto-approve come after delivery. Whether capture happens at delivery or at approval is decided in ADR-001; if it is approval, the delivery window must shrink further.
+> Note: card authorization holds last about **7 days**, so the delivery window is capped to keep capture inside the hold. A delivery that misses the window can no longer be captured. Orders that need a longer window are out of scope for v1 (see ADR-001 for the options).
 
 ## 6. User stories & acceptance criteria
 
@@ -65,33 +66,37 @@ accepted → overdue (past due date) → client may cancel → refunded
 - Validation errors are shown inline. Price is stored in cents.
 
 ### Ordering & payment
-**US-3: As a client, I can order a service by writing a brief and paying by card.**
-- Payment uses Stripe Elements. Card data never touches our server.
-- The order is marked paid **only after the server receives a confirmed payment event** — not when the browser redirects.
-- Refreshing, double-clicking pay, or duplicate events never create two charges or two orders.
-- Failed or 3-D Secure-declined payments show a clear error and leave no paid order.
+**US-3: As a client, I can request a service by writing a brief and saving a card.**
+- Card entry uses Stripe Elements. Card data never touches our server. Nothing is charged or held at this point.
+- The card counts as saved **only after the server receives a confirmed Stripe event** — not when the browser redirects.
+- Refreshing, double-clicking, or duplicate events never create two orders or two saved cards for one request.
+- A card that fails to save (including 3-D Secure failure) shows a clear error and leaves no requested order.
 
-**US-4: As a creator, I can accept or decline a paid order.**
-- Decline or 48h timeout automatically refunds in full (or releases the card hold, depending on ADR-001); the client is notified.
+**US-4: As a creator, I can accept or decline a requested order.**
+- Accepting authorizes the saved card for the full price (a hold, not a charge). The creator is told to start work only after the hold is confirmed by a Stripe event.
+- If the authorization fails (declined, or the bank needs the client to authenticate), the client is notified and has a fixed window to fix it; otherwise the order is cancelled.
+- Decline or 48h timeout closes the order; nothing was charged and the client is notified.
 
 ### Delivery
 **US-5: As a creator, I can upload a delivery video (MP4/MOV, up to 5 GB).**
 - Upload goes directly from browser to storage in chunks. It does not pass through our API server.
 - Progress bar is shown. A dropped connection or page reload can **resume** without starting over.
-- Server verifies the completed file (size, type) before marking the order delivered.
+- Server verifies the completed file (size, type) before marking the order delivered, then captures the held payment (see US-7).
+- The upload must complete before the order's due date, which falls inside the card hold.
 - Abandoned incomplete uploads are cleaned up within 24 hours.
 
-**US-6: As a client, I can watch the delivered video in the browser and request a revision with a note.**
+**US-6: As a client, I can watch and download the delivered video.**
 - Video is served via short-lived signed URLs only. There are no public links.
-- Revision button is disabled after 2 revisions.
-- Full-quality download becomes available after approval (accepted v1 risk: a determined client could capture the stream).
+- Full-quality download is available once the order is delivered and paid (accepted v1 risk: a determined client could capture the stream).
 
 ### Completion & money
-**US-7: As a client, I can approve the delivery, which releases payment to the creator.**
-- On approval (or auto-approval at 5 days), the creator receives order total minus 10% fee.
-- Payout release is idempotent: it cannot happen twice for one order.
+**US-7: As a creator, I am paid when my delivery is verified.**
+- Capturing the held payment pays the creator the order total minus the 10% fee.
+- Capture is idempotent: it cannot happen twice for one order.
+- If capture fails (for example, the hold expired), the order is not marked paid and the admin is alerted (US-10).
 
-**US-8: As a client, I can cancel for a full refund if the order is not yet accepted, or is past its due date.**
+**US-8: As a client, I can cancel an order that is not yet accepted, or whose creator is past the due date.**
+- Before acceptance nothing was charged. Past the due date the card hold is released. Neither case needs a refund.
 
 ### Admin & operations
 **US-9: As an admin, I can see every order's state history and every Stripe event processed for it.**
@@ -105,8 +110,9 @@ accepted → overdue (past due date) → client may cancel → refunded
 | Payment success rate | Stripe integration health | > 95% of attempts |
 | Upload completion rate (started → completed) | Upload reliability | > 90% |
 | Resumed uploads that complete | Proves resumability works | Track |
-| Median time: paid → delivered → approved | Marketplace speed | Track |
-| Refund rate, by reason | Creator reliability | Track |
+| Median time: requested → accepted → delivered | Marketplace speed | Track |
+| Cancellations and admin refunds, by reason | Creator reliability | Track |
+| Authorization success rate at acceptance | Off-session card risk (a saved card is not proof of funds) | Track |
 | Event processing failures | Money-correctness risk | 0 unresolved > 1h |
 
 ## 8. Non-functional requirements
@@ -116,8 +122,8 @@ accepted → overdue (past due date) → client may cancel → refunded
 - **Testing:** payment and upload flows covered by automated end-to-end tests in Stripe test mode.
 
 ## 9. Open questions (to be resolved in ADRs)
-1. **ADR-001:** How do we secure payment given the ~7-day card hold limit? When do we authorize and capture, and how do we handle orders that cannot fit in the window?
+1. **ADR-001:** How do we secure payment given the ~7-day card hold limit? (Proposed answer: save the card at request, authorize at acceptance, capture at delivery, cap the delivery window. See ADR-001.)
 2. **ADR-002:** Chunked upload approach — S3 multipart with presigned URLs vs. TUS.
-3. **ADR-003:** How are timed rules (48h accept, delivery deadline, card hold expiry, 5-day auto-approve, upload cleanup) executed reliably?
+3. **ADR-003:** How are timed rules (48h accept, authorization retry window, delivery deadline and card hold expiry, upload cleanup) executed reliably?
 4. **ADR-004:** Authentication approach — own session auth vs. Auth.js vs. hosted provider.
-5. Should the platform fee be refunded on cancellation? (Proposed: yes, full refund in v1.)
+5. Should the platform fee be refunded when an admin refunds a captured order? (Proposed: yes, full refund in v1.)

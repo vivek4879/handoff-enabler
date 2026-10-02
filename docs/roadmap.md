@@ -24,22 +24,22 @@ Labels: area (`payments`, `uploads`, `infra`, `docs`, `core`) + type (`feature`,
 - [ ] US-2: Creator can create a fixed-price service — `core`
 
 ## S2 · Payments
-- [ ] US-3: Client orders a service and pays by card — `payments`
-- [ ] US-4: Creator accepts or declines order; auto-refund on decline/timeout — `payments`
-- [ ] US-8: Client cancels order for full refund — `payments`
+- [ ] US-3: Client requests a service and saves a card — `payments`
+- [ ] US-4: Creator accepts (card authorized) or declines; nothing charged on decline/timeout — `payments`
+- [ ] US-8: Client cancels before acceptance or past the due date — `payments`
 
 ## S3 · Uploads
 - [ ] US-5: Resumable multipart video upload to R2 — `uploads`
 
 ## S4 · Delivery & approval
-- [ ] US-6: Client watches delivery and requests revision — `uploads`
-- [ ] US-7: Approval releases payout to creator — `payments`
-- [ ] Run timed rules: 48h accept timeout, 5-day auto-approve — `infra`
+- [ ] US-6: Client watches and downloads the delivered video — `uploads`
+- [ ] US-7: Capture on verified delivery pays the creator — `payments`
+- [ ] Run timed rules: 48h accept timeout, authorization retry window, delivery deadline / hold expiry — `infra`
 
 ## S5 · Quality & operations
 - [ ] US-9: Admin order history and Stripe event log — `core`
 - [ ] US-10: Alert on repeated event processing failures — `infra`
-- [ ] E2E tests: hire → pay → upload → approve — `infra`
+- [ ] E2E tests: request → accept → upload → capture — `infra`
 - [ ] Emit product metrics events — `infra`
 
 ## After v1 (not now)
