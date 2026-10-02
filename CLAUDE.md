@@ -20,12 +20,13 @@ Read these before any work:
 - **Tests:** Vitest (unit/integration), Playwright (end-to-end), Stripe CLI for webhooks
 
 ## How we work (mandatory)
-1. **One GitHub issue per branch and PR.** Branch name: `feat/<issue-number>-short-name`. Reference the issue in the PR (`Closes #N`).
+1. **One GitHub issue per branch and PR.** Branch name: `<type>/<issue-number>-short-name`, where `<type>` is `feat`, `fix`, `chore`, or `docs` (same as commit types). Reference the issue in the PR (`Closes #N`).
 2. **Plan first.** Before writing code, present a plan: what files change, the approach, and at least one alternative you rejected and why. Wait for approval.
 3. **Small steps.** Implement one step at a time. After each step, stop and summarize what changed and why.
 4. **Explain the why.** For every non-trivial choice, explain the reasoning and trade-offs in plain language. Link to official docs (Stripe, AWS/R2, Postgres) where relevant.
 5. **Flag decisions.** If a change needs an architectural decision not covered by an ADR, stop and propose a new ADR instead of deciding silently.
 6. **No scope creep.** Implement only what the current issue's acceptance criteria require. Note ideas as follow-ups instead.
+7. **CI gates every merge.** On `main`, the `verify` check (lint, typecheck, test) must pass and the branch must be up to date before merging, and this applies to admins too. In practice every change, docs and roadmap included, goes through a PR.
 
 ## Vivek writes these himself
 Do not write the implementation for these. Explain concepts, ask guiding questions, suggest test cases, and review his code:
@@ -51,9 +52,9 @@ Run these from the repo root unless noted. Requires Node 22 (`.nvmrc`) and Docke
 - Dev (both apps): `pnpm dev` — web on `:3000`, API on `:4000`. Requires `apps/api/.env` to exist (copy from `apps/api/.env.example`).
 - Build: `pnpm build`
 - Lint: `pnpm lint`
-- Typecheck: `pnpm typecheck`
-- Test: `pnpm test` — no test runner wired up yet (S0 scaffolding only).
-- DB migrate: `…` — no migration tool chosen yet.
+- Typecheck: `pnpm typecheck` (runs `next typegen` first for web; Next's generated types aren't committed)
+- Test: `pnpm test` — placeholder until #26: it runs no tests, so a green CI Test step does not mean the code is tested.
+- DB migrate: `…` — pending #29.
 
 ## Commits
 Conventional commits: `feat:`, `fix:`, `test:`, `docs:`, `chore:`, `refactor:`.
