@@ -1,6 +1,6 @@
 # ADR-004: Authentication approach
 
-**Status:** Proposed
+**Status:** Accepted (on merge)
 **Date:** 2026-10-02
 **Author:** Vivek (drafted with Claude)
 

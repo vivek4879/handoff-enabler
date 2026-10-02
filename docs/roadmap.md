@@ -3,7 +3,7 @@
 One sprint ≈ 1 week, ending with something deployed. Each line is a GitHub issue; the milestone is the sprint.
 Labels: area (`payments`, `uploads`, `infra`, `docs`, `core`) + type (`feature`, `bug`, `chore`).
 
-**Current sprint:** S0 · **Current issue:** [#4 ADR-001: Fund holding strategy](https://github.com/vivek4879/handoff-enabler/issues/4)
+**Current sprint:** S0 · **Current issue:** [#26 Set up Vitest and first tests](https://github.com/vivek4879/handoff-enabler/issues/26)
 
 ## S0 · Setup
 - [x] Scaffold monorepo: Next.js web + Node/TS API + Postgres — `infra`
@@ -11,11 +11,11 @@ Labels: area (`payments`, `uploads`, `infra`, `docs`, `core`) + type (`feature`,
 - [ ] Add `pnpm build` to CI (#25) — `infra`
 - [ ] Set up Vitest and first tests (#26) — `infra`
 - [x] Add CLAUDE.md learning-project rules — `docs`
-- [ ] ADR-001: Fund holding strategy — `docs`
-- [ ] ADR-002: Resumable upload approach — `docs`
-- [ ] ADR-003: Scheduling timed order rules — `docs`
-- [ ] ADR-004: Authentication approach — `docs`
-- [ ] ADR-006: Database migration tool (#28) — `docs`
+- [x] ADR-001: Fund holding strategy — `docs`
+- [x] ADR-002: Resumable upload approach — `docs`
+- [x] ADR-003: Scheduling timed order rules — `docs`
+- [x] ADR-004: Authentication approach — `docs`
+- [x] ADR-006: Database migration tool (#28) — `docs`
 - [ ] Choose and wire up a DB migration tool (#29) — `infra`
 
 ## S1 · Accounts & onboarding

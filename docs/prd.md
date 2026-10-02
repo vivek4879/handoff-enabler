@@ -122,7 +122,7 @@ requested (card saved) → accepted (card authorized) → delivered (captured, c
 - **Testing:** payment and upload flows covered by automated end-to-end tests in Stripe test mode.
 
 ## 9. Open questions (to be resolved in ADRs)
-1. **ADR-001:** How do we secure payment given the ~7-day card hold limit? (Proposed answer: save the card at request, authorize at acceptance, capture at delivery, cap the delivery window. See ADR-001.)
+1. **ADR-001:** How do we secure payment given the ~7-day card hold limit? (Decided: save the card at request, authorize at acceptance, capture at delivery, cap the delivery window. See ADR-001.)
 2. **ADR-002:** Chunked upload approach — S3 multipart with presigned URLs vs. TUS.
 3. **ADR-003:** How are timed rules (48h accept, authorization retry window, delivery deadline and card hold expiry, upload cleanup) executed reliably?
 4. **ADR-004:** Authentication approach — own session auth vs. Auth.js vs. hosted provider.

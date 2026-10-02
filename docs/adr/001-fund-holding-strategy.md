@@ -1,6 +1,6 @@
 # ADR-001: Fund holding strategy
 
-**Status:** Proposed
+**Status:** Accepted (on merge)
 **Date:** 2026-10-02
 **Author:** Vivek (drafted with Claude)
 

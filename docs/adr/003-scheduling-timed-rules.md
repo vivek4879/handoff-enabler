@@ -1,6 +1,6 @@
 # ADR-003: Scheduling timed order rules
 
-**Status:** Proposed
+**Status:** Accepted (on merge)
 **Date:** 2026-10-02
 **Author:** Vivek (drafted with Claude)
 

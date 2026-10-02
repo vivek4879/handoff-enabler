@@ -15,7 +15,7 @@ Status: draft. Anything marked **(ADR pending)** is not decided yet — do not i
  (Railway)
    ▲
    │
- Scheduler for timed rules (ADR-003 pending)
+ Scheduler for timed rules (ADR-003)
 ```
 
 | Component | Responsibility |
@@ -25,11 +25,11 @@ Status: draft. Anything marked **(ADR pending)** is not decided yet — do not i
 | Postgres | Source of truth for users, services, orders, order history, uploads, processed Stripe events |
 | R2 | Stores delivery videos; private bucket, access only via signed URLs |
 | Stripe | Card payments, creator payout accounts, transfers, refunds |
-| Scheduler | 48h accept timeout, authorization retry window, delivery deadline and card hold expiry **(ADR-003 pending)** |
+| Scheduler | 48h accept timeout, authorization retry window, delivery deadline and card hold expiry **(ADR-003)** |
 
 ## Key flows (high level)
 
-**Request and hold (US-3, US-4)** — per ADR-001 (proposed)
+**Request and hold (US-3, US-4)** — per ADR-001
 1. Client submits brief → API creates the order (`requested`) and a SetupIntent (with idempotency key).
 2. Browser saves the card with Stripe Elements. Nothing is charged.
 3. Stripe sends `setup_intent.succeeded` → API verifies signature, dedupes by event ID, records the saved card in a transaction.
@@ -37,12 +37,12 @@ Status: draft. Anything marked **(ADR pending)** is not decided yet — do not i
 5. Stripe sends `payment_intent.amount_capturable_updated` → API marks the hold in place. The creator starts work only after this. Failed or authentication-required authorizations notify the client and start the retry window.
 6. The browser redirect only shows status; it never changes state.
 
-**Upload a delivery (US-5)** — approach **(ADR-002 pending)**
+**Upload a delivery (US-5)** — approach (ADR-002)
 1. API starts a multipart upload and returns presigned URLs for parts.
 2. Browser uploads parts directly to R2, tracks ETags, can resume by asking the API which parts exist.
 3. API completes the upload, verifies size/type, marks order delivered, then captures the held payment (see below).
 
-**Capture on delivery (US-7)** — per ADR-001 (proposed)
+**Capture on delivery (US-7)** — per ADR-001
 1. After the delivery is verified, API captures the PaymentIntent (idempotency key). The funds go to the creator minus the 10% fee as part of the capture.
 2. Stripe sends `payment_intent.succeeded` → API verifies, dedupes, marks the order paid in a transaction. A failed capture (for example, an expired hold) leaves the order unpaid and alerts the admin.
 
