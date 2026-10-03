@@ -10,7 +10,10 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "db:migrate": "node --env-file-if-exists=.env node_modules/node-pg-migrate/bin/node-pg-migrate.js up",
+    "db:migrate:down": "node --env-file-if-exists=.env node_modules/node-pg-migrate/bin/node-pg-migrate.js down",
+    "db:migrate:create": "node node_modules/node-pg-migrate/bin/node-pg-migrate.js create --migration-file-language sql"
   },
   "dependencies": {
     "express": "^5.2.1",
@@ -21,6 +24,7 @@
     "@types/node": "^22.10.2",
     "@types/pg": "^8.11.10",
     "eslint": "^9.17.0",
+    "node-pg-migrate": "^9.0.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.18.1",
