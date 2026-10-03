@@ -3,13 +3,13 @@
 One sprint ≈ 1 week, ending with something deployed. Each line is a GitHub issue; the milestone is the sprint.
 Labels: area (`payments`, `uploads`, `infra`, `docs`, `core`) + type (`feature`, `bug`, `chore`).
 
-**Current sprint:** S0 · **Current issue:** [#26 Set up Vitest and first tests](https://github.com/vivek4879/handoff-enabler/issues/26)
+**Current sprint:** S0 · **Current issue:** [#29 Choose and wire up a DB migration tool](https://github.com/vivek4879/handoff-enabler/issues/29)
 
 ## S0 · Setup
 - [x] Scaffold monorepo: Next.js web + Node/TS API + Postgres — `infra`
 - [x] Set up CI: lint, typecheck, test on PRs — `infra`
 - [ ] Add `pnpm build` to CI (#25) — `infra`
-- [ ] Set up Vitest and first tests (#26) — `infra`
+- [x] Set up Vitest and first tests (#26) — `infra`
 - [x] Add CLAUDE.md learning-project rules — `docs`
 - [x] ADR-001: Fund holding strategy — `docs`
 - [x] ADR-002: Resumable upload approach — `docs`

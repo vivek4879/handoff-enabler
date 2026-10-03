@@ -53,7 +53,7 @@ Run these from the repo root unless noted. Requires Node 22 (`.nvmrc`) and Docke
 - Build: `pnpm build`
 - Lint: `pnpm lint`
 - Typecheck: `pnpm typecheck` (runs `next typegen` first for web; Next's generated types aren't committed)
-- Test: `pnpm test` — placeholder until #26: it runs no tests, so a green CI Test step does not mean the code is tested.
+- Test: `pnpm test` — runs the API tests (Vitest). Only `apps/api` is covered; add `apps/web` to the root script when its first test lands.
 - DB migrate: `…` — pending #29.
 
 ## Commits
