@@ -10,6 +10,6 @@
     "build": "pnpm --filter \"./apps/*\" build",
     "lint": "pnpm --filter \"./apps/*\" lint",
     "typecheck": "pnpm --filter \"./apps/*\" --if-present typecheck",
-    "test": "pnpm --filter \"./apps/*\" --if-present test"
+    "test": "pnpm --filter api test"
   }
 }
