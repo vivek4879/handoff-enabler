@@ -3,7 +3,7 @@
 One sprint ≈ 1 week, ending with something deployed. Each line is a GitHub issue; the milestone is the sprint.
 Labels: area (`payments`, `uploads`, `infra`, `docs`, `core`) + type (`feature`, `bug`, `chore`).
 
-**Current sprint:** S0 · **Current issue:** [#29 Choose and wire up a DB migration tool](https://github.com/vivek4879/handoff-enabler/issues/29)
+**Current sprint:** S0 · **Current issue:** [#8 US-0: Users sign up and log in as client or creator](https://github.com/vivek4879/handoff-enabler/issues/8)
 
 ## S0 · Setup
 - [x] Scaffold monorepo: Next.js web + Node/TS API + Postgres — `infra`
@@ -16,12 +16,13 @@ Labels: area (`payments`, `uploads`, `infra`, `docs`, `core`) + type (`feature`,
 - [x] ADR-003: Scheduling timed order rules — `docs`
 - [x] ADR-004: Authentication approach — `docs`
 - [x] ADR-006: Database migration tool (#28) — `docs`
-- [ ] Choose and wire up a DB migration tool (#29) — `infra`
+- [x] Choose and wire up a DB migration tool (#29) — `infra`
 
 ## S1 · Accounts & onboarding
 - [ ] US-0: Users sign up and log in as client or creator — `core`
 - [ ] US-1: Creator payout account onboarding (Stripe Connect) — `payments`
 - [ ] US-2: Creator can create a fixed-price service — `core`
+- [ ] CI: apply migrations to a fresh Postgres (#33) — `infra`
 
 ## S2 · Payments
 - [ ] US-3: Client requests a service and saves a card — `payments`
@@ -41,6 +42,7 @@ Labels: area (`payments`, `uploads`, `infra`, `docs`, `core`) + type (`feature`,
 - [ ] US-10: Alert on repeated event processing failures — `infra`
 - [ ] E2E tests: request → accept → upload → capture — `infra`
 - [ ] Emit product metrics events — `infra`
+- [ ] Run migrations on Railway before the new API version starts (#34) — `infra`
 
 ## After v1 (not now)
 - v2: job queue + worker (SQS), transactional outbox, video processing worker, failure injection
