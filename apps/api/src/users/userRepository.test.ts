@@ -107,3 +107,22 @@ describe("userRepository.findByEmail", () => {
     expect(await users.findByEmail("nobody@example.com")).toBeNull();
   });
 });
+
+describe("userRepository.findById", () => {
+  it("returns the stored user for a known id", async () => {
+    const users = createUserRepository(pool);
+    const created = await users.create({
+      email: "ada@example.com",
+      passwordHash: "hash-value",
+      role: "creator",
+    });
+
+    expect(await users.findById(created.id)).toEqual(created);
+  });
+
+  it("returns null for an id that does not exist", async () => {
+    const users = createUserRepository(pool);
+
+    expect(await users.findById("00000000-0000-4000-8000-000000000000")).toBeNull();
+  });
+});

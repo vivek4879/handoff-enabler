@@ -65,5 +65,16 @@ export function createUserRepository(db: Database) {
       const row = result.rows[0];
       return row ? toUser(row) : null;
     },
+
+    async findById(id: string): Promise<User | null> {
+      const result = await db.query<UserRow>(
+        `SELECT id, email, password_hash, role, created_at
+         FROM users
+         WHERE id = $1`,
+        [id],
+      );
+      const row = result.rows[0];
+      return row ? toUser(row) : null;
+    },
   };
 }
