@@ -1,11 +1,18 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { createApp } from "./app.js";
+import { createAuthService } from "./auth/authService.js";
+import { createFakeSessionStore, createFakeUserStore, fakeHasher } from "./testing/fakeStores.js";
 import { startTestServer, type TestServer } from "./testing/testServer.js";
 
 let testServer: TestServer;
 
 async function startApp(db: { query: () => Promise<unknown> }) {
-  testServer = await startTestServer(createApp({ db: db as never }));
+  const auth = createAuthService({
+    users: createFakeUserStore(),
+    sessions: createFakeSessionStore(),
+    passwordHasher: fakeHasher,
+  });
+  testServer = await startTestServer(createApp({ db: db as never, auth, secureCookies: false }));
   return testServer.baseUrl;
 }
 
