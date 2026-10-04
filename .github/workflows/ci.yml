@@ -14,6 +14,22 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      TEST_DATABASE_URL: postgres://handoff:handoff@localhost:5432/handoff_test
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: handoff
+          POSTGRES_PASSWORD: handoff
+          POSTGRES_DB: handoff_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U handoff -d handoff_test"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -31,6 +47,9 @@ jobs:
 
       - name: Typecheck
         run: pnpm typecheck
+
+      - name: Apply migrations to the test database
+        run: pnpm --filter api db:migrate:test
 
       - name: Test
         run: pnpm test
