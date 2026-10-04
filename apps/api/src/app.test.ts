@@ -44,6 +44,17 @@ describe("GET /health", () => {
   });
 });
 
+describe("response headers", () => {
+  it("does not advertise which framework runs the server", async () => {
+    const baseUrl = await startApp({ query: async () => ({}) });
+
+    const response = await fetch(`${baseUrl}/health`);
+
+    // "X-Powered-By: Express" tells attackers what to look up vulnerabilities for.
+    expect(response.headers.get("x-powered-by")).toBeNull();
+  });
+});
+
 describe("unknown routes", () => {
   it("returns 404 with a JSON error", async () => {
     const baseUrl = await startApp({ query: async () => ({}) });

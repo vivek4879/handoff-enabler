@@ -18,6 +18,10 @@ type AppDependencies = {
 export function createApp({ db, auth, secureCookies }: AppDependencies) {
   const app = express();
 
+  // Express adds "X-Powered-By: Express" to every response by default. There is
+  // no reason to tell the world which framework we run.
+  app.disable("x-powered-by");
+
   // NOTE: when the Stripe webhook route is added, it must use
   // express.raw({ type: "application/json" }) on that route specifically,
   // mounted BEFORE this global JSON parser — Stripe's signature verification
