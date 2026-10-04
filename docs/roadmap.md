@@ -3,7 +3,7 @@
 One sprint ≈ 1 week, ending with something deployed. Each line is a GitHub issue; the milestone is the sprint.
 Labels: area (`payments`, `uploads`, `infra`, `docs`, `core`) + type (`feature`, `bug`, `chore`).
 
-**Current sprint:** S0 · **Current issue:** [#8 US-0: Users sign up and log in as client or creator](https://github.com/vivek4879/handoff-enabler/issues/8)
+**Current sprint:** S1 · **Current issue:** [#36 US-0b: Web sign-up, login, and protected pages](https://github.com/vivek4879/handoff-enabler/issues/36)
 
 ## S0 · Setup
 - [x] Scaffold monorepo: Next.js web + Node/TS API + Postgres — `infra`
@@ -19,10 +19,12 @@ Labels: area (`payments`, `uploads`, `infra`, `docs`, `core`) + type (`feature`,
 - [x] Choose and wire up a DB migration tool (#29) — `infra`
 
 ## S1 · Accounts & onboarding
-- [ ] US-0: Users sign up and log in as client or creator — `core`
+- [x] US-0a: API sign-up, login, sessions, and role guards (#8) — `core`
+- [ ] US-0b: Web sign-up, login, and protected pages (#36) — `core`
+- [ ] Rate-limit login attempts (#37) — `core`
 - [ ] US-1: Creator payout account onboarding (Stripe Connect) — `payments`
 - [ ] US-2: Creator can create a fixed-price service — `core`
-- [ ] CI: apply migrations to a fresh Postgres (#33) — `infra`
+- [x] CI: apply migrations to a fresh Postgres (#33) — `infra`
 
 ## S2 · Payments
 - [ ] US-3: Client requests a service and saves a card — `payments`
@@ -36,6 +38,7 @@ Labels: area (`payments`, `uploads`, `infra`, `docs`, `core`) + type (`feature`,
 - [ ] US-6: Client watches and downloads the delivered video — `uploads`
 - [ ] US-7: Capture on verified delivery pays the creator — `payments`
 - [ ] Run timed rules: 48h accept timeout, authorization retry window, delivery deadline / hold expiry — `infra`
+- [ ] Delete expired sessions (#39) — `infra`
 
 ## S5 · Quality & operations
 - [ ] US-9: Admin order history and Stripe event log — `core`

@@ -12,10 +12,12 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "db:migrate": "node --env-file-if-exists=.env node_modules/node-pg-migrate/bin/node-pg-migrate.js up",
+    "db:migrate:test": "DATABASE_URL=${TEST_DATABASE_URL:-postgres://handoff:handoff@localhost:5432/handoff_test} node node_modules/node-pg-migrate/bin/node-pg-migrate.js up",
     "db:migrate:down": "node --env-file-if-exists=.env node_modules/node-pg-migrate/bin/node-pg-migrate.js down",
     "db:migrate:create": "node node_modules/node-pg-migrate/bin/node-pg-migrate.js create --migration-file-language sql"
   },
   "dependencies": {
+    "@node-rs/argon2": "^2.2.1",
     "express": "^5.2.1",
     "pg": "^8.13.1"
   },

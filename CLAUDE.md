@@ -53,7 +53,7 @@ Run these from the repo root unless noted. Requires Node 22 (`.nvmrc`) and Docke
 - Build: `pnpm build`
 - Lint: `pnpm lint`
 - Typecheck: `pnpm typecheck` (runs `next typegen` first for web; Next's generated types aren't committed)
-- Test: `pnpm test` — runs the API tests (Vitest). Only `apps/api` is covered; add `apps/web` to the root script when its first test lands.
+- Test: `pnpm test` — runs the API tests (Vitest). Only `apps/api` is covered; add `apps/web` to the root script when its first test lands. Repository tests use a real Postgres test database: one-time setup `docker compose exec postgres createdb -U handoff handoff_test`, then `pnpm --filter api db:migrate:test` after adding migrations. Override the URL with `TEST_DATABASE_URL`.
 - DB migrate: `pnpm --filter api db:migrate` (apply), `db:migrate:create <name>` (new SQL file in `apps/api/migrations/`), `db:migrate:down` (dev only: production moves forward with a new migration, see ADR-006). Reads `DATABASE_URL`; loads `apps/api/.env` if present.
 
 ## Commits
