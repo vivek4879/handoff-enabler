@@ -38,6 +38,7 @@ Labels: area (`payments`, `uploads`, `infra`, `docs`, `core`) + type (`feature`,
 - [ ] US-6: Client watches and downloads the delivered video — `uploads`
 - [ ] US-7: Capture on verified delivery pays the creator — `payments`
 - [ ] Run timed rules: 48h accept timeout, authorization retry window, delivery deadline / hold expiry — `infra`
+- [ ] Delete expired sessions (#39) — `infra`
 
 ## S5 · Quality & operations
 - [ ] US-9: Admin order history and Stripe event log — `core`
