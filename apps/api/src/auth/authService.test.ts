@@ -1,60 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { createFakeSessionStore, createFakeUserStore, fakeHasher } from "../testing/fakeStores.js";
 import { EmailAlreadyRegisteredError } from "../users/errors.js";
-import type { User } from "../users/user.js";
-import {
-  createAuthService,
-  SESSION_LIFETIME_MS,
-  type PasswordHasher,
-  type SessionStore,
-  type UserStore,
-} from "./authService.js";
+import { createAuthService, SESSION_LIFETIME_MS, type PasswordHasher } from "./authService.js";
 import { InvalidCredentialsError, ValidationError } from "./errors.js";
 
 // These tests use in-memory fakes for the database and a fake password hasher,
 // so they run in microseconds and need no Postgres. What they check is the
 // service's RULES. (The SQL itself is covered by the repository tests.)
-
-function createFakeUserStore(): UserStore {
-  const users = new Map<string, User>();
-  return {
-    async create(newUser) {
-      if ([...users.values()].some((existing) => existing.email === newUser.email)) {
-        throw new EmailAlreadyRegisteredError();
-      }
-      const user: User = { id: `user-${users.size + 1}`, ...newUser, createdAt: new Date(0) };
-      users.set(user.id, user);
-      return user;
-    },
-    async findByEmail(email) {
-      return [...users.values()].find((user) => user.email === email) ?? null;
-    },
-    async findById(id) {
-      return users.get(id) ?? null;
-    },
-  };
-}
-
-function createFakeSessionStore(): SessionStore {
-  const sessions = new Map<string, { userId: string; expiresAt: Date }>();
-  const key = (tokenHash: Buffer) => tokenHash.toString("hex");
-  return {
-    async create({ tokenHash, userId, expiresAt }) {
-      sessions.set(key(tokenHash), { userId, expiresAt });
-    },
-    async findActive(tokenHash, now) {
-      const session = sessions.get(key(tokenHash));
-      return session && session.expiresAt > now ? session : null;
-    },
-    async delete(tokenHash) {
-      sessions.delete(key(tokenHash));
-    },
-  };
-}
-
-const fakeHasher: PasswordHasher = {
-  hash: async (plain) => `fake-hash:${plain}`,
-  verify: async (plain, storedHash) => storedHash === `fake-hash:${plain}`,
-};
 
 function buildService(passwordHasher: PasswordHasher = fakeHasher) {
   const clock = { current: new Date("2030-01-01T00:00:00Z") };
